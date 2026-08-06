@@ -6,7 +6,6 @@ Membership Inference Attack (**MIA**) experiments for federated learning under *
 |----------|-----------|-------------|
 | Client-driven | `client_driven/` | Single-process FedMeZO sim: local MeZO → upload `g_sum` → server detection |
 | Server-driven | `server_driven/` | MIA inside a real FL loop via `FwdLLM-master` |
-| On-device (Android) | `commu/` | Real-phone FL: Flask server + Android MeZO clients (PyTorch Android) |
 
 **Models:** DistilBERT, Open-Llama-3B + LoRA.  
 **Data:** AG News / Alpaca / Dolly / GSM8K (`datasets/`); some runs use BBC / HuffPost as out-of-domain aux sets.
@@ -50,21 +49,6 @@ python MIA_llama3b.py --dataset alpaca --device cuda:0
 Outputs usually land in each folder’s `outputs/`, or under  
 `server_driven/FwdLLM-master/.../mia_results/<dataset>/`.
 
-### On-device FL (`commu/`)
-
-Android MeZO clients + a Flask aggregation / MIA server for phone experiments.
-
-```bash
-cd commu
-# start server (see env vars in commu/readme.md)
-python server.py
-# build & install the Android app (Android Studio or ./gradlew)
-```
-
-Full setup (venv, AG News / DistilBERT paths, phone networking): see [`commu/readme.md`](commu/readme.md).
-
----
-
 ## Scripts
 
 ### Client (`client_driven/`)
@@ -93,7 +77,6 @@ Full setup (venv, AG News / DistilBERT paths, phone networking): see [`commu/rea
 | `MIA_alpaca_llama3b-stealty.py` | Stealth metrics (`--stealth_only` supported) |
 | `MIA_alpaca_llama3b-negonly.py` | Online threshold neg-only ablation |
 
-Scripts without argparse: run directly and edit the in-file `Config`.
 
 ---
 
@@ -107,12 +90,3 @@ datasets/gsm8k/                  # local parquet only
 datasets/bbc-news/
 datasets/HuffPost_News_Category/
 ```
-
----
-
-## Notes
-
-- Some default paths are machine-specific; override with `--data_root` / `--data_path` / `--model_name`.
-- Run from `client_driven/` or `server_driven/` so relative `outputs/` resolve correctly.
-- Client and server pipelines differ in detail — do not compare metrics blindly.
-- For research use only; do not attack unauthorized data.
